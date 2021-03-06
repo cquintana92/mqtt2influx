@@ -1,0 +1,23 @@
+log_level = "info"
+client_id = "mqtt2influx-client"
+port = 3333
+
+[mqtt]
+host = "192.168.1.10"
+port = 1883
+username = ""
+password = ""
+
+[subscriptions.room]
+topic = "some/topic/room"
+device_name = "Room"
+
+[subscriptions.kitchen]
+topic = "other/kitchen"
+device_name = "Kitchen"
+
+[influx]
+server = "http://127.0.0.1:8086"
+database = "my_database"
+username = "user"
+password = "password"

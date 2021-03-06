@@ -1,0 +1,40 @@
+stages:
+  - lint
+  - test
+  - build
+
+lint:fmt:
+  stage: lint
+  image: guangie88/rustfmt-clippy:1.50.0-stable
+  script:
+    - cargo fmt --all -- --check
+    - cargo clippy --all -- -D warnings
+
+test:
+  stage: test
+  image: rust:slim
+  script:
+    - cargo --version
+    - rustc --version
+    - cargo test --all
+
+build:release:
+  stage: build
+  image: docker:stable
+  services:
+    - docker:dind
+  only:
+    refs:
+      - tags
+  script:
+    - echo "CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}"
+    - CI_COMMIT_REF_NAME=`echo "${CI_COMMIT_REF_NAME}" | sed 's:/:-:g'`
+    - echo "CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}"
+    - DOCKER_IMAGE_NAME="registry.gitlab.com/cquintana92/mqtt2influx"
+    - IMAGE_NAME="${DOCKER_IMAGE_NAME}:${CI_COMMIT_REF_NAME}"
+    - LATEST_IMAGE_NAME="${DOCKER_IMAGE_NAME}:latest"
+    - echo "IMAGE_NAME=${IMAGE_NAME}"
+    - docker build -t "${IMAGE_NAME}" .
+    - docker push "${IMAGE_NAME}"
+    - docker tag "${IMAGE_NAME}" "${LATEST_IMAGE_NAME}"
+    - docker push "${LATEST_IMAGE_NAME}"
