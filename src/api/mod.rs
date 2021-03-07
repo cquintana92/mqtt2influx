@@ -8,9 +8,14 @@ mod types;
 
 pub use types::*;
 
+#[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
+struct ApiValuesResponse {
+    values: Vec<ApiEvent>,
+}
+
 async fn get(state: web::Data<Arc<ApiState>>) -> HttpResponse {
     let values = state.values().await;
-    HttpResponse::Ok().json(values)
+    HttpResponse::Ok().json(&ApiValuesResponse { values })
 }
 
 async fn health() -> HttpResponse {

@@ -5,18 +5,18 @@ use std::collections::HashMap;
 use tokio::sync::RwLock;
 
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
-pub struct APIEvent {
+pub struct ApiEvent {
     name: String,
     temperature: f32,
     updated_at: i64,
 }
 
 pub struct ApiState {
-    contents: RwLock<HashMap<String, APIEvent>>,
+    contents: RwLock<HashMap<String, ApiEvent>>,
 }
 
 impl ApiState {
-    pub async fn values(&self) -> Vec<APIEvent> {
+    pub async fn values(&self) -> Vec<ApiEvent> {
         self.contents.read().await.values().cloned().collect()
     }
 }
@@ -33,7 +33,7 @@ impl Default for ApiState {
 impl EventSink for ApiState {
     async fn sink(&self, event: Event) -> Result<()> {
         let mut contents = self.contents.write().await;
-        let api_event = APIEvent {
+        let api_event = ApiEvent {
             name: event.device_name.clone(),
             temperature: event.temperature,
             updated_at: Utc::now().naive_utc().timestamp(),
