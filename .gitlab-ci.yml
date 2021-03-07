@@ -13,6 +13,20 @@ lint:fmt:
 test:
   stage: test
   image: rust:latest
+  services:
+    - name: "influxdb:1.5.4-alpine"
+      alias: influx
+  variables:
+    TEST_INFLUX_URL: "http://influx:8086"
+    TEST_INFLUX_DB: test_db
+    TEST_INFLUX_USER: user
+    TEST_INFLUX_PASSWORD: password
+    INFLUXDB_ADMIN_ENABLED: "true"
+    INFLUXDB_DB: test_db
+    INFLUXDB_ADMIN_USER: admin
+    INFLUXDB_ADMIN_PASSWORD: admin
+    INFLUXDB_USER: user
+    INFLUXDB_PASSWORD: password
   script:
     - cargo --version
     - rustc --version

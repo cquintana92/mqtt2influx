@@ -6,9 +6,9 @@ use influxdb::Client as InfluxClient;
 use influxdb::InfluxDbWriteable;
 use tokio_compat_02::FutureExt;
 
-const TEMPERATURE_TABLE: &str = "temperature";
-const HUMIDITY_TABLE: &str = "humidity";
-const BATTERY_TABLE: &str = "battery";
+pub const TEMPERATURE_TABLE: &str = "temperature";
+pub const HUMIDITY_TABLE: &str = "humidity";
+pub const BATTERY_TABLE: &str = "battery";
 
 pub struct InfluxDbConnectionParameters<'a> {
     pub server: &'a str,

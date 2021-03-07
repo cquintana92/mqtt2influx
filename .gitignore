@@ -1,3 +1,4 @@
 /target
 .idea/
 *.mqtt2influx.toml
+.env

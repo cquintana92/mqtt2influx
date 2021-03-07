@@ -5,7 +5,7 @@ pub use influx::*;
 pub use log::*;
 pub use tee::*;
 
-mod influx;
+pub mod influx;
 mod log;
 mod tee;
 
