@@ -12,7 +12,7 @@ lint:fmt:
 
 test:
   stage: test
-  image: rust:slim
+  image: rust:latest
   script:
     - cargo --version
     - rustc --version
