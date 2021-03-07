@@ -11,6 +11,10 @@ license = "MIT"
 readme = "README.md"
 include = ["src/**/*", "tests/**/*", "Cargo.toml", "LICENSE"]
 repository = "https://github.com/Empty2k12/influxdb-rust"
+autotests = false
+
+[lib]
+doctest = false
 
 [badges]
 travis-ci = { repository = "Empty2k12/influxdb-rust", branch = "master" }
