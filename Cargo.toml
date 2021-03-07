@@ -6,7 +6,7 @@ edition = "2018"
 publish = false
 
 [workspace]
-members = ["mqtt2influx-core"]
+members = ["mqtt2influx-core", "influxdb-rust/influxdb", "influxdb-rust/influxdb_derive"]
 
 [dependencies]
 mqtt2influx-core = { path = "./mqtt2influx-core"}
