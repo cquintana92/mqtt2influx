@@ -36,7 +36,7 @@ impl EventSink for ApiState {
         let api_event = ApiEvent {
             name: event.device_name.clone(),
             temperature: event.temperature,
-            updated_at: Utc::now().naive_utc().timestamp(),
+            updated_at: Utc::now().naive_utc().timestamp_millis(),
         };
         contents.insert(event.device_name, api_event);
         Ok(())

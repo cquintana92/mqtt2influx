@@ -66,7 +66,7 @@ async fn sink_sends_event() {
     .expect("Should be able to sink");
 
     let client = influxdb::Client::new(INFLUX_URL.as_str(), INFLUX_DB.as_str());
-    let table = mqtt2influx_core::sink::influx::TEMPERATURE_TABLE;
+    let table = mqtt2influx_core::sink::influx::READINGS_TABLE;
 
     let q = ReadQuery::new(format!("SELECT device_name FROM {} WHERE device_name='{}';", table, name));
     let res = client.query(&q).await.expect("Should be able to query");

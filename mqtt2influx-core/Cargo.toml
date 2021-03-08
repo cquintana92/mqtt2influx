@@ -1,6 +1,6 @@
 [package]
 name = "mqtt2influx-core"
-version = "1.1.4"
+version = "1.2.0"
 authors = ["Carlos Quintana <carlos@cquintana.dev>"]
 edition = "2018"
 publish = false

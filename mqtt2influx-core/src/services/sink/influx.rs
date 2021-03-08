@@ -6,9 +6,7 @@ use influxdb::Client as InfluxClient;
 use influxdb::InfluxDbWriteable;
 use tokio_compat_02::FutureExt;
 
-pub const TEMPERATURE_TABLE: &str = "temperature";
-pub const HUMIDITY_TABLE: &str = "humidity";
-pub const BATTERY_TABLE: &str = "battery";
+pub const READINGS_TABLE: &str = "readings";
 
 pub struct InfluxDbConnectionParameters<'a> {
     pub server: &'a str,
@@ -26,23 +24,24 @@ pub struct InfluxDbSink {
 }
 
 #[derive(Debug, InfluxDbWriteable)]
-struct InfluxDbTemperatureEvent {
+struct InfluxDbEvent {
     time: DateTime<Utc>,
     device_name: String,
     temperature: f32,
-}
-#[derive(InfluxDbWriteable)]
-struct InfluxDbHumidityEvent {
-    time: DateTime<Utc>,
-    device_name: String,
     humidity: f32,
+    battery: u8,
 }
 
-#[derive(InfluxDbWriteable)]
-struct InfluxDbBatteryEvent {
-    time: DateTime<Utc>,
-    device_name: String,
-    battery: u8,
+impl From<Event> for InfluxDbEvent {
+    fn from(e: Event) -> Self {
+        Self {
+            time: chrono::Utc::now(),
+            device_name: e.device_name,
+            temperature: e.temperature,
+            humidity: e.humidity,
+            battery: e.battery,
+        }
+    }
 }
 
 impl InfluxDbSink {
@@ -69,42 +68,13 @@ impl InfluxDbSink {
 #[async_trait::async_trait]
 impl EventSink for InfluxDbSink {
     async fn sink(&self, event: Event) -> Result<()> {
-        let now = chrono::Utc::now();
-        let temperature = InfluxDbTemperatureEvent {
-            time: now,
-            device_name: event.device_name.clone(),
-            temperature: event.temperature,
-        };
-        let humidity = InfluxDbHumidityEvent {
-            time: now,
-            device_name: event.device_name.clone(),
-            humidity: event.humidity,
-        };
-        let battery = InfluxDbBatteryEvent {
-            time: now,
-            device_name: event.device_name.clone(),
-            battery: event.battery,
-        };
+        let e = InfluxDbEvent::from(event);
 
-        let mut has_failed = false;
-        if let Err(e) = self.client.query(&temperature.into_query(TEMPERATURE_TABLE)).compat().await {
+        if let Err(e) = self.client.query(&e.into_query(READINGS_TABLE)).compat().await {
             tracing::error!("Error sending temperature event to InfluxDb: {}", e.to_string());
-            has_failed = true;
-        }
-        if let Err(e) = self.client.query(&humidity.into_query(HUMIDITY_TABLE)).compat().await {
-            tracing::error!("Error sending humidity event to InfluxDb: {}", e.to_string());
-            has_failed = true;
-        }
-        if let Err(e) = self.client.query(&battery.into_query(BATTERY_TABLE)).compat().await {
-            tracing::error!("Error sending battery event to InfluxDb: {}", e.to_string());
-            has_failed = true;
-        }
-
-        if has_failed {
-            Err(anyhow::anyhow!("There was an error sending the events to InfluxDb"))
         } else {
             tracing::info!("Event stored into InfluxDb");
-            Ok(())
         }
+        Ok(())
     }
 }
