@@ -1,5 +1,5 @@
 use influxdb::ReadQuery;
-use mqtt2influx_core::utils::generate_random_token;
+use mqtt2influx_core::utils::{generate_random_number, generate_random_token};
 use mqtt2influx_core::{Event, EventSink, InfluxDbConnectionParameters, InfluxDbCredentials, InfluxDbSink};
 
 lazy_static::lazy_static! {
@@ -37,7 +37,7 @@ struct InfluxResult {
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
 struct InfluxSerie {
     name: String,
-    values: Vec<Vec<String>>,
+    values: Vec<Vec<serde_json::Value>>,
 }
 
 #[tokio::test]
@@ -54,21 +54,29 @@ async fn sink_sends_event() {
     .expect("Error creating sink");
 
     let name = generate_random_token(10);
-    sink.sink(Event {
+
+    let event = Event {
         device_name: name.clone(),
-        battery: 1,
-        humidity: 2.0,
-        temperature: 3.0,
-        voltage: 4,
-        linkquality: 5,
-    })
-    .await
-    .expect("Should be able to sink");
+        battery: generate_random_number(1, 100) as u8,
+        humidity: generate_random_number(1, 100) as f32,
+        temperature: generate_random_number(1, 100) as f32,
+        voltage: generate_random_number(1, 100) as u16,
+        linkquality: generate_random_number(1, 100) as u8,
+    };
+    sink.sink(event.clone()).await.expect("Should be able to sink");
 
     let client = influxdb::Client::new(INFLUX_URL.as_str(), INFLUX_DB.as_str());
     let table = mqtt2influx_core::sink::influx::READINGS_TABLE;
 
-    let q = ReadQuery::new(format!("SELECT device_name FROM {} WHERE device_name='{}';", table, name));
+    let query = format!(
+        "SELECT device_name,temperature FROM {table} WHERE battery={battery} AND humidity={humidity} AND temperature={temperature};",
+        table = table,
+        battery = event.battery,
+        humidity = event.humidity,
+        temperature = event.temperature
+    );
+    let q = ReadQuery::new(query);
+
     let res = client.query(&q).await.expect("Should be able to query");
     let results: InfluxResults = serde_json::from_str(&res).expect("Error parsing influx response");
     assert_eq!(results.results.len(), 1, "Should return 1 result");
@@ -83,8 +91,13 @@ async fn sink_sends_event() {
     assert_eq!(values.len(), 1, "Should contain only 1 value");
 
     let value = &values[0];
-    assert_eq!(value.len(), 2, "Value should contain 2 entries");
+    assert_eq!(value.len(), 3, "Value should contain 2 entries");
 
-    let device_name = &value[1];
-    assert_eq!(device_name, &name, "Name should match");
+    let device_name_value = &value[1];
+    match device_name_value {
+        serde_json::Value::String(device_name) => {
+            assert_eq!(device_name, &name, "Name should match");
+        }
+        _ => panic!("Value should be a String"),
+    }
 }
