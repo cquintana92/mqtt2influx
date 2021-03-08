@@ -1085,7 +1085,7 @@ dependencies = [
 
 [[package]]
 name = "influxdb"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "async-std",
  "chrono",
@@ -1102,7 +1102,7 @@ dependencies = [
 
 [[package]]
 name = "influxdb_derive"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1276,7 +1276,7 @@ dependencies = [
 
 [[package]]
 name = "mqtt2influx"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "actix-service",
  "actix-web",
@@ -1296,7 +1296,7 @@ dependencies = [
 
 [[package]]
 name = "mqtt2influx-core"
-version = "1.2.0"
+version = "1.2.1"
 dependencies = [
  "anyhow",
  "async-trait",
