@@ -26,6 +26,7 @@ pub struct InfluxDbSink {
 #[derive(Debug, InfluxDbWriteable)]
 struct InfluxDbEvent {
     time: DateTime<Utc>,
+    #[tag]
     device_name: String,
     temperature: f32,
     humidity: f32,
