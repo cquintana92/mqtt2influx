@@ -8,6 +8,7 @@ use tokio::sync::RwLock;
 pub struct ApiEvent {
     name: String,
     temperature: f32,
+    humidity: f32,
     updated_at: i64,
 }
 
@@ -36,6 +37,7 @@ impl EventSink for ApiState {
         let api_event = ApiEvent {
             name: event.device_name.clone(),
             temperature: event.temperature,
+            humidity: event.humidity,
             updated_at: Utc::now().naive_utc().timestamp_millis(),
         };
         contents.insert(event.device_name, api_event);
