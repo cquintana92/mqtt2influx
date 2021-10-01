@@ -5,8 +5,9 @@ stages:
 
 lint:fmt:
   stage: lint
-  image: guangie88/rustfmt-clippy:1.50.0-stable
+  image: rust:1.55-buster
   script:
+    - rustup component add fmt clippy
     - cargo fmt --all -- --check
     - cargo clippy --all -- -D warnings
 
