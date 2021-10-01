@@ -1,0 +1,40 @@
+name: tests
+on:
+  pull_request: {}
+  push:
+    branches:
+      - main
+jobs:
+  test:
+    name: test
+    runs-on: ubuntu-20.04
+    steps:
+      # Setup repo (depth: 0 is for retrieving all info, so git-version does not crash)
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Install rust stable
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      # Setup Rust cache
+      - uses: Swatinem/rust-cache@v1
+
+      # Start dependencies
+      - name: Start containers
+        run: docker-compose -f "docker-compose.yml" up -d
+
+      # Run rust tests
+      - run: cargo test --all
+        env:
+          TEST_INFLUX_URL: http://127.0.0.1:8086
+          TEST_INFLUX_DB: sensors
+          TEST_INFLUX_USER: user
+          TEST_INFLUX_PASSWORD: password
+
+      # Stop dependencies
+      - name: Stop containers
+        if: always()
+        run: docker-compose -f "docker-compose.yml" down
