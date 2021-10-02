@@ -1,0 +1,45 @@
+name: release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  # Generate docker image
+  docker:
+    name: docker-image
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get the release version from the tag
+        if: env.BIN_VERSION == ''
+        run: |
+          # Apparently, this is the right way to get a tag name. Really?
+          #
+          # See: https://github.community/t5/GitHub-Actions/How-to-get-just-the-tag-name/m-p/32167/highlight/true#M1027
+          echo "BIN_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=ghcr.io/cquintana92/mqtt2influx:${{ env.BIN_VERSION }}" >> $GITHUB_ENV
+          echo "version is: ${{ env.BIN_VERSION }}"
+          echo "image name is: ${{ env.IMAGE_NAME }}"
+
+      - name: Create docker image
+        run: |
+          docker build . -t ${{ env.IMAGE_NAME }}
+          docker tag ${{ env.IMAGE_NAME }} ghcr.io/cquintana92/mqtt2influx:latest
+
+      - name: Upload docker image
+        run: |
+        docker push ${{ env.IMAGE_NAME }}
+        docker push ghcr.io/cquintana92/mqtt2influx:latest
