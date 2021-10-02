@@ -37,9 +37,9 @@ jobs:
       - name: Create docker image
         run: |
           docker build . -t ${{ env.IMAGE_NAME }}
-          docker tag ${{ env.IMAGE_NAME }} ghcr.io/cquintana92/mqtt2influx:latest
+          docker tag ${{ env.IMAGE_NAME }} "ghcr.io/cquintana92/mqtt2influx:latest"
 
       - name: Upload docker image
         run: |
-        docker push ${{ env.IMAGE_NAME }}
-        docker push ghcr.io/cquintana92/mqtt2influx:latest
+          docker push ${{ env.IMAGE_NAME }}
+          docker push "ghcr.io/cquintana92/mqtt2influx:latest"
