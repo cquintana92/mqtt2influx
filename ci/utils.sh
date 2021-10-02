@@ -1,5 +1,7 @@
 #!/bin/bash
 
+REPO_NAME="mqtt2influx"
+
 # Various utility functions used through CI.
 
 # Finds Cargo's `OUT_DIR` directory from the most recent build.
@@ -10,7 +12,7 @@ cargo_out_dir() {
     # This works by finding the most recent stamp file, which is produced by
     # every ripgrep build.
     target_dir="$1"
-    find "$target_dir" -name git-switch-user-stamp -print0 \
+    find "$target_dir" -name "${REPO_NAME}-stamp" -print0 \
       | xargs -0 ls -t \
       | head -n1 \
       | xargs dirname

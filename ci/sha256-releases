@@ -2,6 +2,9 @@
 
 set -e
 
+REPO_OWNER="cquintana92"
+REPO_NAME="mqtt2influx"
+
 if [ $# != 1 ]; then
   echo "Usage: $(basename $0) version" >&2
   exit 1
@@ -11,7 +14,7 @@ version="$1"
 # Linux and Darwin builds.
 for arch in i686 x86_64; do
   for target in apple-darwin unknown-linux-musl; do
-    url="https://github.com/cquintana92/git-switch-user/releases/download/$version/git-switch-user-$version-$arch-$target.tar.gz"
+    url="https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/download/$version/${REPO_NAME}-$version-$arch-$target.tar.gz"
     sha=$(curl -sfSL "$url" | sha256sum)
     echo "$version-$arch-$target $sha"
   done
@@ -19,7 +22,7 @@ done
 
 # Source.
 for ext in zip tar.gz; do
-  url="https://github.com/cquintana92/git-switch-user/archive/$version.$ext"
+  url="https://github.com/${REPO_OWNER}/${REPO_NAME}/archive/$version.$ext"
   sha=$(curl -sfSL "$url" | sha256sum)
   echo "source.$ext $sha"
 done

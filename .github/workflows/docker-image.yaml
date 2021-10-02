@@ -5,6 +5,10 @@ on:
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
 
+env:
+  REGISTRY: ghcr.io
+  REPOSITORY: cquintana92/mqtt2influx
+
 jobs:
   # Generate docker image
   docker:
@@ -30,16 +34,16 @@ jobs:
           #
           # See: https://github.community/t5/GitHub-Actions/How-to-get-just-the-tag-name/m-p/32167/highlight/true#M1027
           echo "BIN_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          echo "IMAGE_NAME=ghcr.io/cquintana92/mqtt2influx:${{ env.BIN_VERSION }}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ env.BIN_VERSION }}" >> $GITHUB_ENV
           echo "version is: ${{ env.BIN_VERSION }}"
           echo "image name is: ${{ env.IMAGE_NAME }}"
 
       - name: Create docker image
         run: |
           docker build . -t ${{ env.IMAGE_NAME }}
-          docker tag ${{ env.IMAGE_NAME }} "ghcr.io/cquintana92/mqtt2influx:latest"
+          docker tag ${{ env.IMAGE_NAME }} "${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest"
 
       - name: Upload docker image
         run: |
           docker push ${{ env.IMAGE_NAME }}
-          docker push "ghcr.io/cquintana92/mqtt2influx:latest"
+          docker push "${{ env.REGISTRY }}/${{ env.REPOSITORY }}:latest"
