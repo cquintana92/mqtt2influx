@@ -1499,7 +1499,7 @@ dependencies = [
 
 [[package]]
 name = "mqtt2influx"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
  "actix-service",
  "actix-web",
@@ -1519,7 +1519,7 @@ dependencies = [
 
 [[package]]
 name = "mqtt2influx-core"
-version = "1.3.0"
+version = "1.3.1"
 dependencies = [
  "anyhow",
  "async-trait",

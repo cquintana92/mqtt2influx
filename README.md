@@ -13,9 +13,25 @@ Its main purpose is to read sensor readings coming from a [Zigbee2MQTT](https://
 
 * Only compatible with InfluxDB v1 (for tests, version 1.5.4 is used).
 
+## How to get
+
+You can either grab the [latest release](https://github.com/cquintana92/mqtt2influx/releases/latest) or build it yourself:
+
+```
+$ cargo build --release
+```
+
+Add the binary to your path and you are ready to go!
+
+### Docker image
+
+You can find the docker image at `ghcr.io/cquintana92/mqtt2influx:latest` (or `:VERSION` instead of `:latest`).
+
 ### Configuration
 
 An example configuration file can be found at the file [mqtt2influx.toml](./mqtt2influx.toml).
+
+The docker image can be configured via env variables too, using a double underscore for indicating sections (ie: `influx.server` would be expressed as `INFLUX__SERVER`).
 
 ## License
 
