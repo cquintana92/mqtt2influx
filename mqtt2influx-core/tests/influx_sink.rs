@@ -61,7 +61,7 @@ async fn sink_sends_event() {
         humidity: generate_random_number(1, 100) as f32,
         temperature: generate_random_number(1, 100) as f32,
         voltage: generate_random_number(1, 100) as u16,
-        linkquality: generate_random_number(1, 100) as u8,
+        linkquality: Some(generate_random_number(1, 100) as u8),
     };
     sink.sink(event.clone()).await.expect("Should be able to sink");
 

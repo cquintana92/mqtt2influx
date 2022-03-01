@@ -4,7 +4,7 @@ pub struct RawMqttEvent {
     pub humidity: f32,
     pub temperature: f32,
     pub voltage: u16,
-    pub linkquality: u8,
+    pub linkquality: Option<u8>,
 }
 
 #[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
@@ -14,7 +14,7 @@ pub struct Event {
     pub humidity: f32,
     pub temperature: f32,
     pub voltage: u16,
-    pub linkquality: u8,
+    pub linkquality: Option<u8>,
 }
 
 impl Event {
