@@ -55,6 +55,6 @@ pub fn random_event() -> Event {
         humidity: 2.3,
         temperature: 4.5,
         voltage: 6,
-        linkquality: 7,
+        linkquality: Some(7),
     }
 }
