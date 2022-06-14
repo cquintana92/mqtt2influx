@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate tracing;
+
 use clap::{App as ClapApp, Arg};
 use mqtt2influx_core::{Executor, InfluxDbSink, MqttConnectionParameters, MqttEventSource, SinkTee};
 use std::sync::Arc;
@@ -45,16 +48,16 @@ async fn main() {
     let tee = SinkTee::new(Arc::new(influx_sink), api_sink.clone());
 
     tokio::spawn(async move {
-        tracing::info!("Executor started");
+        info!("Executor started");
         if let Err(e) = Executor::run(source, &tee).await {
-            tracing::error!("[Executor] Fatal error: {}", e);
+            error!("[Executor] Fatal error: {}", e);
             std::process::exit(1);
         }
     });
 
-    tracing::info!("Application started: [{}]", VERSION);
+    info!("Application started: [{}]", VERSION);
     if let Err(e) = api::run(configuration.port, api_sink).await {
-        tracing::error!("[API] Fatal error: {}", e);
+        error!("[API] Fatal error: {}", e);
         std::process::exit(1);
     }
 }

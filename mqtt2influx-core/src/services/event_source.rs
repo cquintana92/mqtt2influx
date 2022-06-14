@@ -43,7 +43,7 @@ impl EventSource for MqttEventSource {
             if let Err(e) = tx.send(request).await {
                 return Err(AppError::Mqtt(format!("Error sending Subscribe request: {:?}", e)).into());
             } else {
-                tracing::info!("Subscribed to [{}]", topic);
+                info!("Subscribed to [{}]", topic);
             }
         }
 
@@ -53,7 +53,7 @@ impl EventSource for MqttEventSource {
         let (chan_tx, chan_rx) = channel::<Event>(10);
         tokio::spawn(async move {
             if let Err(e) = handler.run(event_loop, chan_tx).await {
-                tracing::error!("Error in SubscriptionHandler: {}", e.to_string());
+                error!("Error in SubscriptionHandler: {}", e.to_string());
             }
         });
 
@@ -72,31 +72,31 @@ impl SubscriptionHandler {
                 Ok(v) => {
                     if let MqttEvent::Incoming(Incoming::Publish(publish)) = v {
                         if let Err(e) = self.handle_publish(publish, &tx).await {
-                            tracing::error!("Error handling publish: {}", e);
+                            error!("Error handling publish: {}", e);
                         }
                     }
                 }
                 Err(e) => {
-                    tracing::error!("MQTT connection error: {:?}", e);
-                    break;
+                    error!("MQTT connection error: {:?}", e);
+                    error!("Finishing program");
+                    std::process::exit(1);
                 }
             };
         }
-        Ok(())
     }
 
     async fn handle_publish(&self, publish: Publish, tx: &Sender<Event>) -> Result<()> {
         let subscription = match self.subscriptions.iter().find(|s| s.topic == publish.topic) {
             Some(s) => s,
             None => {
-                tracing::trace!("Received event for unknown subscription [topic={}]", publish.topic);
+                trace!("Received event for unknown subscription [topic={}]", publish.topic);
                 return Ok(());
             }
         };
 
         let event: RawMqttEvent = serde_json::from_slice(&publish.payload)?;
         let converted = Event::from_mqtt(event, &subscription.device_name);
-        tracing::trace!("Received event: {:?}", converted);
+        trace!("Received event: {:?}", converted);
         tx.send(converted).await?;
         Ok(())
     }

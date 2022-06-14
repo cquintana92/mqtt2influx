@@ -9,14 +9,14 @@ impl Executor {
         Source: EventSource,
         Sink: EventSink,
     {
-        tracing::info!("Starting EventSource");
+        info!("Starting EventSource");
         let mut rx = source.start().await?;
 
-        tracing::info!("Receiving events");
+        info!("Receiving events");
         while let Some(event) = rx.recv().await {
-            tracing::info!("Event received: {:?}", event);
+            info!("Event received: {:?}", event);
             if let Err(e) = sink.sink(event).await {
-                tracing::error!("Error sinking event: {}", e);
+                error!("Error sinking event: {}", e);
             }
         }
         Ok(())

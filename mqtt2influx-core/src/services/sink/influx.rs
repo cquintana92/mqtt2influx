@@ -36,7 +36,7 @@ struct InfluxDbEvent {
 impl From<Event> for InfluxDbEvent {
     fn from(e: Event) -> Self {
         Self {
-            time: chrono::Utc::now(),
+            time: Utc::now(),
             device_name: e.device_name,
             temperature: e.temperature,
             humidity: e.humidity,
@@ -49,10 +49,9 @@ impl InfluxDbSink {
     pub async fn new(params: InfluxDbConnectionParameters<'_>) -> Result<Self> {
         let client = Self::create_client(params);
         let (build_type, version) = client.ping().compat().await.context("Error checking connection to InfluxDB")?;
-        tracing::info!(
+        info!(
             "Successfully connected to InfluxDB [build_type={}] [version={}]",
-            build_type,
-            version
+            build_type, version
         );
         Ok(Self { client })
     }
@@ -72,9 +71,9 @@ impl EventSink for InfluxDbSink {
         let e = InfluxDbEvent::from(event);
 
         if let Err(e) = self.client.query(&e.into_query(READINGS_TABLE)).compat().await {
-            tracing::error!("Error sending temperature event to InfluxDb: {}", e.to_string());
+            error!("Error sending temperature event to InfluxDb: {}", e.to_string());
         } else {
-            tracing::info!("Event stored into InfluxDb");
+            info!("Event stored into InfluxDb");
         }
         Ok(())
     }

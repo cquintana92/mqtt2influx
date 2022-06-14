@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate tracing;
+
 use thiserror::Error;
 
 pub mod executor;

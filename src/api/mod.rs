@@ -24,7 +24,7 @@ async fn health() -> HttpResponse {
 
 pub async fn run(port: u16, state: Arc<ApiState>) -> Result<()> {
     let addr = format!("0.0.0.0:{}", port);
-    tracing::info!("Started API [http://{}]", &addr);
+    info!("Started API [http://{}]", &addr);
     HttpServer::new(move || {
         let ignored = vec!["/health".to_string()];
         App::new()

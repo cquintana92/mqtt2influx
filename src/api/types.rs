@@ -33,6 +33,10 @@ impl Default for ApiState {
 #[async_trait::async_trait]
 impl EventSink for ApiState {
     async fn sink(&self, event: Event) -> Result<()> {
+        debug!(
+            "Updating API state [name={}] [temp={}] [humid={}]",
+            event.device_name, event.temperature, event.humidity
+        );
         let mut contents = self.contents.write().await;
         let api_event = ApiEvent {
             name: event.device_name.clone(),
