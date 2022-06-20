@@ -15,7 +15,9 @@ struct ApiValuesResponse {
 
 async fn get(state: web::Data<Arc<ApiState>>) -> HttpResponse {
     let values = state.values().await;
-    HttpResponse::Ok().json(&ApiValuesResponse { values })
+    HttpResponse::Ok()
+        .append_header(("Access-Control-Allow-Origin", "*"))
+        .json(&ApiValuesResponse { values })
 }
 
 async fn health() -> HttpResponse {
