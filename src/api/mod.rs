@@ -31,7 +31,7 @@ pub async fn run(port: u16, state: Arc<ApiState>) -> Result<()> {
         let ignored = vec!["/health".to_string()];
         App::new()
             .wrap(request_logger_middleware::RequestLogger::new_with_ignored_paths(ignored))
-            .wrap(request_id_middleware::RequestId::default())
+            .wrap(request_id_middleware::RequestId)
             .app_data(web::Data::new(state.clone()))
             .route("/", web::get().to(get))
             .route("/health", web::get().to(health))
