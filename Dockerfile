@@ -1,4 +1,4 @@
-FROM ekidd/rust-musl-builder:latest AS build
+FROM clux/muslrust:stable AS build
 
 COPY . /home/rust/src
 RUN cargo build --release
