@@ -23,7 +23,7 @@ pub struct MqttConnectionParameters<'a> {
 impl MqttEventSource {
     pub fn new(connection: MqttConnectionParameters, subscriptions: Vec<Subscription>) -> Self {
         let mut mqtt_options = MqttOptions::new(connection.client_id, connection.host, connection.port);
-        mqtt_options.set_keep_alive(5);
+        mqtt_options.set_keep_alive(60);
         Self {
             mqtt_options,
             subscriptions,
